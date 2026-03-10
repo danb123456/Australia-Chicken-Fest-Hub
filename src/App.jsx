@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import { traders, venues, nuances, influencers, desserts } from './data/festivalData';
+import { traders, venues, nuances, influencers, desserts, projectConfig } from './data/festivalData';
 import { 
   Users, 
   MapPin, 
@@ -312,10 +312,11 @@ function InfluencersView({ data, selectedCity, setSelectedCity }) {
   );
 }
 
-function EmailDrafter({ data, venues, influencers }) {
+function EmailDrafter({ data, venues, influencers, desserts }) {
   const [targetType, setTargetType] = useState('trader');
   const [selectedId, setSelectedId] = useState('');
   const [draft, setDraft] = useState('');
+  const [sender, setSender] = useState(projectConfig.senders[0]);
 
   const handleGenerate = () => {
     const list = targetType === 'trader' ? data : (targetType === 'venue' ? venues : (targetType === 'influencer' ? influencers : desserts));
@@ -323,54 +324,82 @@ function EmailDrafter({ data, venues, influencers }) {
     if (!target) return;
 
     let template = "";
+    const sisterFestsStr = projectConfig.sisterFestivals.map(f => `${f.name}${f.url ? ' (' + f.url + ')' : ''}`).join(', ');
 
     if (targetType === 'trader' || targetType === 'dessert') {
       const typeLabel = targetType === 'trader' ? 'poultry' : 'dessert';
-      template = `Subject: Partnership Proposal: Australia Chicken Festival Series 2024 / 2025
+      template = `Subject: Partnership Proposal: Australia Chicken Festival Series - ${target.city} 2027
 
 Hi ${target.contact || 'Team ' + target.name},
 
 I'm reaching out from the festival organizing team. We've been following ${target.name} and love your setup in ${target.city}.
 
-We are launching a specialized poultry festival series across Brisbane, Sydney, and Melbourne later this year, and we'd love to have you onboard as a key ${typeLabel} partner.
+We are launching a specialized poultry festival series across Brisbane, Sydney, and Melbourne in ${projectConfig.timing}. We'd love to have you onboard as a key ${typeLabel} partner.
+
+A bit about us: our sister festivals include ${sisterFestsStr}. For this Australian series, we are projecting a footfall of ${projectConfig.footfall} people over the 3-day event.
 
 Given your reputation for quality, we think you'd be a perfect fit for our premium high-volume crowds.
 
 Would you be open to a quick call this week to discuss a pitch deck and site availability?
 
 Best regards,
+${sender.name}
 Outreach.AU Team`;
     } else if (targetType === 'venue') {
-      template = `Subject: Venue Inquiry: Regional Poultry Festival Series
+      template = `Subject: Venue Inquiry: Regional Poultry Festival Series - ${target.city} 2027
 
 Dear ${target.name} Partnerships Team,
 
-We are currently scouting locations for a high-profile multi-city food festival series focusing on poultry/chicken culture.
+We are currently scouting locations for a high-profile multi-city food festival series focusing on poultry/chicken culture, targeting ${projectConfig.timing}.
 
-We've identified ${target.name} in ${target.city} as a top-tier candidate for our ${target.city} leg. Our event expects a high-turnout of premium vendors and attendees.
+We've identified ${target.name} as a top-tier candidate for our ${target.city} leg. Our event expects a high-turnout of ${projectConfig.footfall} visitors.
 
-Do you have availability between Q4 2024 and Q1 2025 for a 3-day activation?
+Outreach Details:
+- Proposed Timing: ${projectConfig.timing} (Open to suggestions)
+- Duration: ${projectConfig.duration}
+- Logistics: ${projectConfig.buildBreak}
+- Footprint Required: Main event arena for traders and seating, stage area for live music, separate trade/market zone, production & backstage area for crew and performers.
+
+Our team has extensive experience with festivals like ${sisterFestsStr}. It would be great to see whether working with you (or any other suitable venue you might suggest) is possible.
+
+Would you be open to discussing availability for 2027?
 
 Best regards,
+${sender.name}
 Outreach.AU Organizing Committee`;
     } else if (targetType === 'influencer') {
-      template = `Subject: Influencer Partnership: National Poultry Festival Series
+      template = `Subject: Influencer Partnership: National Poultry Festival Series 2027
 
 Hi ${target.name},
 
 I'm from the Outreach.AU marketing team. We've been huge fans of your ${target.niche} content for a while!
 
-We are launching Australia's largest dedicated poultry festival series (Brisbane, Sydney, Melbourne) and we'd love to discuss an exclusive content partnership with you for the ${target.city === 'National' ? 'entire series' : target.city + ' leg'}.
+We are launching Australia's largest dedicated poultry festival series (Feb/March 2027) and we're projecting ${projectConfig.footfall} attendees per city. We'd love to discuss an exclusive content partnership with you for the ${target.city === 'National' ? 'entire series' : target.city + ' leg'}.
 
 We're looking for partners who truly understand the local food scene and can help us drive high engagement. 
 
 Would you be open to hearing more about our creator packages?
 
 Cheers,
+${sender.name}
 Marketing Team @ Outreach.AU`;
     }
 
     setDraft(template);
+  };
+
+  const openGmail = () => {
+    const list = targetType === 'trader' ? data : (targetType === 'venue' ? venues : (targetType === 'influencer' ? influencers : desserts));
+    const target = list.find(item => item.id === parseInt(selectedId));
+    if (!target || !draft) return;
+
+    const email = target.email || '';
+    const subject = draft.split('\n')[0].replace('Subject: ', '');
+    const body = draft.split('\n').slice(2).join('\n');
+    
+    // Using a more reliable Gmail compose link format
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(gmailUrl, '_blank');
   };
 
   return (
@@ -379,6 +408,21 @@ Marketing Team @ Outreach.AU`;
         <h2>AI Outreach Drafter</h2>
       </div>
       <div className="card" style={{ maxWidth: '700px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '24px' }}>
+          <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '8px', color: 'var(--color-text-muted)' }}>AUTHORIZED SENDER</label>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            {projectConfig.senders.map(s => (
+              <button 
+                key={s.id}
+                className={`filter-btn ${sender.id === s.id ? 'active' : ''}`}
+                onClick={() => setSender(s)}
+              >
+                {s.name} ({s.email})
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div style={{ marginBottom: '24px' }}>
           <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '8px', color: 'var(--color-text-muted)' }}>RECIPIENT TYPE</label>
           <div style={{ display: 'flex', gap: '12px' }}>
@@ -433,14 +477,23 @@ Marketing Team @ Outreach.AU`;
 
         {draft && (
           <div style={{ marginTop: '32px', animation: 'fadeIn 0.3s ease' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <h4 style={{ color: 'var(--color-accent)' }}>PREVIEW DRAFT</h4>
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+               <button 
+                onClick={openGmail}
+                style={{ flex: 1, padding: '14px', background: '#db4437', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              >
+                <Mail size={18} /> SEND VIA GMAIL
+              </button>
               <button 
                 onClick={() => { navigator.clipboard.writeText(draft); alert('Copied to clipboard!'); }}
-                style={{ background: 'transparent', border: 'none', color: 'var(--color-text-muted)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+                style={{ flex: 1, padding: '14px', background: 'var(--color-bg-alt)', color: 'var(--color-text)', border: '1px solid var(--color-border)', borderRadius: '8px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               >
-                <CheckCircle2 size={14} /> COPY CONTENT
+                <CheckCircle2 size={18} /> COPY TO CLIPBOARD
               </button>
+            </div>
+            
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <h4 style={{ color: 'var(--color-accent)' }}>PREVIEW DRAFT</h4>
             </div>
             <pre style={{ background: '#000', padding: '20px', borderRadius: '8px', overflowX: 'auto', whiteSpace: 'pre-wrap', fontSize: '0.9rem', color: '#ccc', border: '1px dashed #333' }}>
               {draft}
