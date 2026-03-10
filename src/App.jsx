@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import { traders, venues, nuances, influencers, desserts, projectConfig } from './data/festivalData';
+import { traders, venues, nuances, influencers, desserts, projectConfig, financialBenchmarks } from './data/festivalData';
 import { 
   Users, 
   MapPin, 

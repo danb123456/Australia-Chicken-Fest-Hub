@@ -232,7 +232,46 @@ export const projectConfig = {
   ],
   senders: [
     { id: 'dan', name: "Dan", email: "dan@savourfestival.com" },
-    { id: 'jack', name: "Jack", email: "jack@savourfestival.com" }
   ]
+};
+
+export const financialBenchmarks = {
+  Brisbane: {
+    venueHire: 12000,
+    securityMedics: 65000,
+    powerInfra: 35000,
+    wasteManagement: 8500,
+    marketing: 30000,
+    staffTravel: 18000,
+    insurancePermits: 6000,
+    barBuild: 25000
+  },
+  Sydney: {
+    venueHire: 18000,
+    securityMedics: 85000,
+    powerInfra: 45000,
+    wasteManagement: 12000,
+    marketing: 45000,
+    staffTravel: 25000,
+    insurancePermits: 9000,
+    barBuild: 30000
+  },
+  Melbourne: {
+    venueHire: 15000,
+    securityMedics: 80000,
+    powerInfra: 40000,
+    wasteManagement: 10000,
+    marketing: 40000,
+    staffTravel: 22000,
+    insurancePermits: 8000,
+    barBuild: 28000
+  },
+  averages: {
+    ticketPrice: 30,
+    barSpend: 22,
+    traderSalesPerHead: 15,
+    traderCommissionPct: 15,
+    barCOGS: 32 // 32% cost of goods
+  }
 };
 
