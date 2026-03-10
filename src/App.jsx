@@ -16,7 +16,10 @@ import {
   DollarSign,
   PieChart,
   TrendingUp,
-  Settings
+  Settings,
+  BookOpen,
+  BarChart2,
+  ShieldAlert
 } from 'lucide-react';
 
 function App() {
@@ -48,6 +51,13 @@ function App() {
         </div>
         
         <nav className="nav-links">
+          <button 
+            className={`nav-item ${activeView === 'context' ? 'active' : ''}`}
+            onClick={() => setActiveView('context')}
+          >
+            <BookOpen size={18} />
+            Market Context
+          </button>
           <button 
             className={`nav-item ${activeView === 'traders' ? 'active' : ''}`}
             onClick={() => setActiveView('traders')}
@@ -103,6 +113,7 @@ function App() {
       {/* Main Content Area */}
       <main className="main-content scroll-container">
         <div className="view-container">
+          {activeView === 'context' && <ContextView />}
           {activeView === 'traders' && (
             <TradersView 
               data={filteredTraders} 
