@@ -44,33 +44,33 @@ function MarketOverview() {
     { label: 'Taste of Summer — Hobart (Dec 25/Jan 26)', value: '98,000+', sub: 'Up from 87k the prior season — a 13% single-year surge' },
     { label: 'Chicken Consumption in AU (2025)', value: '50kg/head/yr', sub: 'Projected to exceed 55kg by 2026 · QSR chicken sales >$4B by 2032' },
     { label: 'Orange FOOD Week 2025 Ticket Growth', value: '+31%', sub: 'Avg visitor stay up to 2.5 nights; 1-in-3 stayed 4+ nights' },
-    { label: 'Wing Fest UK 2025 — 6-City Expansion', value: '11th Year', sub: '500,000+ wings at London leg alone · 60 traders across 6 cities' },
+    { label: 'Meatstock 2026 Expansion', value: 'Gippsland NEW', sub: 'Adding 4th city to AU tour alongside Sydney & Toowoomba' },
   ];
 
   const comparisons = [
     {
       topic: 'Food Festival Maturity (2025/2026 Snapshot)',
-      au: 'The AU food festival market remains in a high-growth, post-COVID expansion phase with no sign of peaking. The Hobart Taste of Summer hit 98,000 attendees in Dec 2025/Jan 2026 — up 13% year-on-year. Tasting Australia (Adelaide) confirmed its 19th edition for May 2026. New festivals are emerging and existing ones are expanding, rather than consolidating.',
-      uk: 'Wing Fest UK expanded from 2 to 6 cities in 2025 — its 11th year. Now visiting Derby, London, Birmingham, Bristol, Manchester and Sheffield, with ~60 traders competing across events. The London leg alone expected over 500,000 wings served over a long weekend. The format is proven and scalable.',
-      gap: 'AU\\'s festival scene is growing faster than the UK\\'s in percentage terms. But the UK\\'s specialist chicken festival circuit is more developed. No "Wing Fest Australia" equivalent exists — this is the direct gap we are entering.'
+      au: `The AU food festival market remains in a high-growth, post-COVID expansion phase with no sign of peaking. The Hobart Taste of Summer hit 98,000 attendees in Dec 2025/Jan 2026 — up 13% year-on-year. Tasting Australia (Adelaide) confirmed its 19th edition for May 2026. New festivals are emerging and existing ones are expanding, rather than consolidating.`,
+      uk: `The UK festival market is highly mature with over 7,000 active food trucks and a dense established circuit. Major festivals report steady 4-5% CAGR, with niche and specialist food events being the fastest-growing sub-sectors. Differentiation is now the primary survival factor in the UK.`,
+      gap: `AU's festival scene is growing faster than the UK's in percentage terms. Specialist poultry festivals are virtually non-existent in AU, whereas they are a multi-city staple in the UK. This is the direct gap we are entering.`
     },
     {
       topic: 'Chicken Popularity & Consumer Demand (2026)',
-      au: 'Australians consume 50kg+ of chicken per person per year, forecast to exceed 55kg by 2026. Chicken is the #1 most consumed meat in AU. QSR chicken sector is forecast to surpass AUD $4B by 2032. Culturally, chicken spans every demographic and income bracket — it is the universal Australian protein.',
-      uk: 'Wing Fest 2025 expects 500,000+ wings served at its London event over a single long weekend. In 11 years the festival has grown from one London venue to a 6-city national tour. Chicken tenders overtook burgers as the best-selling festival dish across the UK in 2024.',
-      gap: 'If Wing Fest can draw those numbers in a mature market, the AU equivalent — where per-capita chicken consumption is even higher — should be at minimum equally viable. The concept is proven; the territory is untapped.'
+      au: `Australians consume 50kg+ of chicken per person per year, forecast to exceed 55kg by 2026. Chicken is the #1 most consumed meat in AU. QSR chicken sector is forecast to surpass AUD $4B by 2032. Culturally, chicken spans every demographic and income bracket — it is the universal Australian protein.`,
+      uk: `The UK has seen a massive "poultry pivot" in recent years. Chicken tenders famously overtook burgers as the best-selling festival protein in 2024. Dedicated specialist poultry events are now a standard part of the UK summer circuit, drawing tens of thousands of attendees.`,
+      gap: `AU has higher per-capita demand for chicken than the UK, yet lacks a premium specialist festival vehicle. The UK success of chicken-first events shows the format works. The territory is untapped.`
     },
     {
       topic: 'Consumer Experience Trends (Late 2025)',
-      au: 'The Orange FOOD Week 2025 data is instructive: +31% ticket growth AND visitors staying on average 2.5 nights — suggesting food events are now driving meaningful tourism with economic multipliers beyond the gate. One-third of visitors stayed 4+ nights, double the previous year. Food events are becoming travel destinations, not just day-trips.',
-      uk: 'In 2025, the UK festival sector projected 5.7% annual revenue growth, building on 4% historic CAGR from 2018–2023. Experiential food is the fastest-growing sub-category. Consumers are prioritising quality food experiences even during cost-of-living pressure — the "affordable luxury" positioning remains strong.',
-      gap: 'The overnight stay behaviour visible in Australian food festivals in 2025 is a signal: visitors are not just coming for hours, they\\'re converting into mini-breaks. A 3-day Brisbane/Sydney/Melbourne tour format directly capitalises on this trend.'
+      au: `The Orange FOOD Week 2025 data is instructive: +31% ticket growth AND visitors staying on average 2.5 nights — suggesting food events are now driving meaningful tourism with economic multipliers beyond the gate. One-third of visitors stayed 4+ nights, double the previous year. Food events are becoming travel destinations, not just day-trips.`,
+      uk: `In 2025, the UK festival sector projected 5.7% annual revenue growth, building on 4% historic CAGR from 2018–2023. Experiential food is the fastest-growing sub-category. Consumers are prioritising quality food experiences even during cost-of-living pressure — the "affordable luxury" positioning remains strong.`,
+      gap: `The overnight stay behaviour visible in Australian food festivals in 2025 is a signal: visitors are not just coming for hours, they're converting into mini-breaks. A 3-day Brisbane/Sydney/Melbourne tour format directly capitalises on this trend.`
     },
     {
       topic: 'Alcohol Culture & Bar Revenue (2025/2026)',
-      au: 'Craft beer and cocktail culture continues to grow strongly. At major food festivals in 2025, bar revenue consistently outperforms food revenue per attendee. Alcohol prices remain 20–30% higher than the UK. The "Drink Victorian / Drink Local" movement is actively promoted by state governments, creating ready-made partnership opportunities with AU craft breweries.',
-      uk: 'Wing Fest consistently reports bar revenue as the largest single revenue line. At UK festivals broadly, alcohol spend per head exceeds food spend at ratio of ~1.35:1. Non-alcoholic alternatives are growing (35% in 2024) but traditional drinks dominate. Bar efficiency is the biggest margin driver.',
-      gap: 'AU\\'s structural bar margin advantage (higher prices, growing craft scene, government-backed local brand partnerships) means bar revenue should outperform our UK P&L assumptions. This is a hidden upside in the financial model.'
+      au: `Craft beer and cocktail culture continues to grow strongly. At major food festivals in 2025, bar revenue consistently outperforms food revenue per attendee. Alcohol prices remain 20–30% higher than the UK. The "Drink Victorian / Drink Local" movement is actively promoted by state governments, creating ready-made partnership opportunities with AU craft breweries.`,
+      uk: `In the UK, alcohol spend per head at festivals typically exceeds food spend at a ratio of ~1.35:1. Specialist events report bar revenue as their largest single margin line. Despite the growth of non-alcoholic options, beer and spirits remain the primary revenue drivers.`,
+      gap: `AU's structural bar margin advantage (higher prices, growing craft scene, government-backed local brand partnerships) means bar revenue should outperform standard UK P&L benchmarks. This is a hidden upside.`
     },
   ];
 
@@ -79,7 +79,7 @@ function MarketOverview() {
       {/* Recency badge */}
       <div style={{ background: 'rgba(255,204,0,0.07)', border: '1px solid rgba(255,204,0,0.25)', borderRadius: '8px', padding: '12px 16px', marginBottom: '28px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ fontSize: '1.2rem' }}>📅</span>
-        <span style={{ fontSize: '0.85rem' }}>Stats updated with <strong style={{ color: 'var(--color-accent)' }}>late 2025 / early 2026</strong> data where available. Case studies include Meatstock 2026 tour, Taste of Summer Dec 2025/Jan 2026, and Wing Fest UK 2025 (6-city expansion).</span>
+        <span style={{ fontSize: '0.85rem' }}>Stats updated with <strong style={{ color: 'var(--color-accent)' }}>late 2025 / early 2026</strong> data where available. Case studies include Meatstock 2026 tour, Taste of Summer Dec 2025/Jan 2026, and Orange FOOD Week 2025 success.</span>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '40px' }}>
@@ -156,26 +156,6 @@ function CaseStudies() {
         'Free-entry outer zones drive footfall volume; commercial revenue then comes from bar and food',
         'Summer timing in AU works for festivals — it just requires proper shade, water and heat management',
         'A 13% single-year growth rate in 2025/26 validates our timing as landing in a sustained growth window',
-      ]
-    },
-    {
-      name: 'Wing Fest UK — 2025 National Tour',
-      type: 'Specialist Chicken Wing Festival',
-      cities: 'Derby · London · Birmingham · Bristol · Manchester · Sheffield',
-      relevance: 'HIGH',
-      recency: '2025',
-      stats: [
-        { label: '2025 Cities', value: '6 cities', note: 'Expanded from 2 cities in its earlier years' },
-        { label: 'Years Running', value: '11 years', note: 'In its 11th year in London in 2025' },
-        { label: 'London Leg', value: '500,000+ wings', note: 'Expected over one long weekend' },
-        { label: 'Traders & Competition', value: '~60 traders', note: 'Best Buffalo, Best BBQ, Best Wild Wing competitions' },
-      ],
-      analysis: 'Wing Fest UK is our closest global comparator — a dedicated chicken wing festival now running a 6-city national tour in its 11th year. The London event alone expects 500,000+ wings served over a single long weekend. This is the direct proof-of-concept for our Australian format: the Wing Fest model is a scalable, multi-city, specialist chicken event that works. It has not been replicated in Australia. We are not guessing — we are following a proven international playbook into an untapped market.',
-      lessons: [
-        'An 11-year, 6-city chicken festival is proof the specialist format is sustainable and scalable',
-        '500,000+ wings at one event over a weekend directly validates the appetite for our format in AU',
-        '~60 independent traders competing for wing titles is the exact structure our Chicken Fest should have',
-        'Wing Fest hasn\'t launched in Australia — this is an explicit market gap we are the first to fill professionally',
       ]
     },
     {
@@ -257,12 +237,6 @@ function RisksView() {
       severity: 'HIGH',
       body: 'Even with strong market growth data (98k at Taste of Summer, +31% at Orange FOOD Week), these are established brands with years of trust built in their markets. You are launching cold with no existing AU brand equity. Success for others does not transfer automatically. Australians don\'t know who Savour Festival is — and they don\'t owe you their weekend.',
       mitigation: 'Run a genuine pilot (500–1,000 capacity) in one city — Brisbane is the lowest-risk entry point — before committing to a 3-city tour. Partner with an established AU promoter or venue with an existing email list. Launch the brand digitally 12+ months before tickets go on sale to build warm audiences.'
-    },
-    {
-      title: 'Wing Fest Has 11 Years of Brand Equity We Do Not Have',
-      severity: 'HIGH',
-      body: 'Wing Fest\'s ability to draw 500,000+ wings at a single London event is built on a decade of trust, media coverage, and word-of-mouth. An AU equivalent in year one will not achieve anything close to this. Benchmarking success against an 11-year-old event in year one is a planning error that leads to dangerous expectations.',
-      mitigation: 'Set year-one targets based on comparable first-year AU food events (typically 3,000–6,000 per event). Use Wing Fest as the long-term vision (year 4–5+), not the year-one benchmark. Explicitly model a year-one loss scenario and ensure you have the capital buffer to absorb it and return for year two.'
     },
     {
       title: 'Liquor Licensing & RSA Compliance is State-by-State in Australia',

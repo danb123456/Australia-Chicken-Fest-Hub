@@ -23,9 +23,119 @@ import {
   ShieldAlert
 } from 'lucide-react';
 
+function PasswordGate({ onAuthenticated }) {
+  const [input, setInput] = useState('');
+  const [error, setError] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (input === 'Theroostofoz') {
+      onAuthenticated();
+    } else {
+      setError(true);
+      setInput('');
+    }
+  };
+
+  return (
+    <div style={{
+      height: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#0a0a0a',
+      color: 'white',
+      fontFamily: 'Inter, sans-serif'
+    }}>
+      <form onSubmit={handleSubmit} style={{
+        background: '#141414',
+        padding: '40px',
+        borderRadius: '16px',
+        border: '1px solid #333',
+        width: '100%',
+        maxWidth: '400px',
+        textAlign: 'center',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
+      }}>
+        <div style={{ 
+          width: '64px', 
+          height: '64px', 
+          background: 'rgba(255,204,0,0.1)', 
+          borderRadius: '50%', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          margin: '0 auto 24px'
+        }}>
+          <ShieldAlert size={32} color="#FFCC00" />
+        </div>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '8px' }}>Restricted Access</h1>
+        <p style={{ color: '#888', marginBottom: '32px', fontSize: '0.9rem' }}>Please enter the portal password to continue.</p>
+        
+        <input 
+          type="password" 
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Enter password..."
+          autoFocus
+          style={{
+            width: '100%',
+            padding: '14px 16px',
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid #333',
+            borderRadius: '8px',
+            color: 'white',
+            marginBottom: '16px',
+            outline: 'none',
+            fontSize: '1rem',
+            transition: 'border-color 0.2s'
+          }}
+          onFocus={(e) => e.target.style.borderColor = '#FFCC00'}
+          onBlur={(e) => e.target.style.borderColor = '#333'}
+        />
+        
+        {error && (
+          <div style={{ 
+            color: '#ff4444', 
+            fontSize: '0.8rem', 
+            marginBottom: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px'
+          }}>
+            <AlertTriangle size={14} /> Incorrect password
+          </div>
+        )}
+        
+        <button type="submit" style={{
+          width: '100%',
+          padding: '14px',
+          background: '#FFCC00',
+          color: '#000',
+          border: 'none',
+          borderRadius: '8px',
+          fontWeight: 800,
+          fontSize: '1rem',
+          cursor: 'pointer',
+          transition: 'transform 0.1s, opacity 0.2s'
+        }}
+        onMouseOver={(e) => e.target.style.opacity = '0.9'}
+        onMouseOut={(e) => e.target.style.opacity = '1'}
+        onMouseDown={(e) => e.target.style.transform = 'scale(0.98)'}
+        onMouseUp={(e) => e.target.style.transform = 'scale(1)'}
+        >
+          Unlock Dashboard
+        </button>
+      </form>
+    </div>
+  );
+}
+
 function App() {
   const [activeView, setActiveView] = useState('traders');
   const [selectedCity, setSelectedCity] = useState('All');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const filteredTraders = selectedCity === 'All' 
     ? traders 
@@ -42,6 +152,10 @@ function App() {
   const filteredDesserts = selectedCity === 'All'
     ? desserts
     : desserts.filter(d => d.city === selectedCity);
+
+  if (!isAuthenticated) {
+    return <PasswordGate onAuthenticated={() => setIsAuthenticated(true)} />;
+  }
 
   return (
     <div className="app-container">
