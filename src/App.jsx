@@ -14,7 +14,9 @@ import {
   Star,
   IceCream,
   DollarSign,
-  PieChart
+  PieChart,
+  TrendingUp,
+  Settings
 } from 'lucide-react';
 
 function App() {
