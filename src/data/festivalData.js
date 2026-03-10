@@ -121,17 +121,17 @@ export const desserts = [
 
 export const influencers = [
   // SYDNEY
-  { id: 1, name: "Lily Huynh", followers: "7.0M", handle: "@biteswithlily", platform: "TikTok/IG/YT", city: "Sydney", niche: "Street Food/Reviews" },
+  { id: 1, name: "Bites With Lily", followers: "917K", handle: "@biteswithlily", platform: "IG/TikTok", city: "Sydney", niche: "Food Discovery / Restaurant Promo" },
   { id: 2, name: "Adrian Widjy", followers: "381K", handle: "@adrianwidjy", platform: "IG/TikTok", city: "Sydney", niche: "Sydney Guides/Hidden Gems" },
   { id: 3, name: "Issac Eatsalot", followers: "450K", handle: "@issac_eatsalot", platform: "TikTok/IG", city: "Sydney", niche: "Food Challenges/Reviews" },
-  { id: 4, name: "Kevin La (SydneyFoodBoy)", followers: "193K", handle: "@sydneyfoodboy", platform: "IG/TikTok", city: "Sydney", niche: "Multicultural Eats" },
+  { id: 4, name: "Sydney Food Boy (Kev)", followers: "200K", handle: "@sydneyfoodboy", platform: "IG/TikTok", city: "Sydney", niche: "Restaurant & Personality Led" },
   { id: 5, name: "The Food Inbox", followers: "120K", handle: "@thefoodinbox", platform: "IG/TikTok", city: "Sydney", niche: "Honest Restaurant Reviews" },
   { id: 6, name: "Nicholas Effendi", followers: "281K", handle: "@nickandhelmi", platform: "TikTok/IG", city: "Sydney", niche: "Travel/Food Guides" },
   { id: 7, name: "Eat With JK", followers: "85K", handle: "@eatwithjk", platform: "IG/TikTok", city: "Sydney", niche: "Couple Food Reviews" },
   { id: 8, name: "Janice Fung", followers: "95K", handle: "@itsjanicefung", platform: "IG/YouTube", city: "Sydney", niche: "Detailed Food Vlogs" },
   { id: 9, name: "Ron Mushoul", followers: "65K", handle: "@ronmushoul", platform: "IG/TikTok", city: "Sydney", niche: "Food Truck Enthusiast" },
   { id: 10, name: "Erin", followers: "18K", handle: "@erinxeats", platform: "IG", city: "Sydney", niche: "Real Local Reviews" },
-  { id: 11, name: "Places in Sydney", followers: "210K", handle: "@places_in_sydney", platform: "IG/TikTok", city: "Sydney", niche: "City Dining Guide" },
+  { id: 11, name: "Places in Sydney", followers: "193K", handle: "@places_in_sydney", platform: "IG/TikTok", city: "Sydney", niche: "Food Discovery Platform" },
   { id: 12, name: "Sydney Food Spotter", followers: "25K", handle: "@sydneyfoodspotter", platform: "IG", city: "Sydney", niche: "Aesthetic Cafes" },
   { id: 13, name: "Bynessa Eats", followers: "35K", handle: "@bynessa_eats", platform: "TikTok", city: "Sydney", niche: "Asian Treats/Reviewer" },
   { id: 14, name: "Valerie N. Eats", followers: "42K", handle: "@valerie.n.eats", platform: "IG", city: "Sydney", niche: "Fine Dining/Lifestyle" },
@@ -172,8 +172,8 @@ export const influencers = [
   { id: 45, name: "Foodies in Brisbane", followers: "11K", handle: "@foodiesinbrisbane", platform: "IG", city: "Brisbane", niche: "Weekend Dining Guides" },
   { id: 46, name: "BNE Eats Guide", followers: "28K", handle: "@bne.eats", platform: "IG", city: "Brisbane", niche: "Restaurant Spotlights" },
   
-  // NATIONAL / FLIGHT READY
-  { id: 47, name: "Dez Cerimagic (Recipes)", followers: "7.5M", handle: "@_aussiefitness", platform: "TikTok/IG", city: "National", niche: "Event Recipes" },
+  // NATIONAL / PREMIUM
+  { id: 47, name: "Andy Cooks (Andy Hearnden)", followers: "5.9M", handle: "@andycooks", platform: "TikTok/IG/YT", city: "National", niche: "Chef / Content Machine" },
   { id: 48, name: "Foodie Nation AU", followers: "150K", handle: "@foodienationau", platform: "IG", city: "National", niche: "Festival Guides" }
 ];
 
