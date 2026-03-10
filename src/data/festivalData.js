@@ -235,43 +235,29 @@ export const projectConfig = {
   ]
 };
 
-export const financialBenchmarks = {
-  Brisbane: {
-    venueHire: 12000,
-    securityMedics: 65000,
-    powerInfra: 35000,
-    wasteManagement: 8500,
-    marketing: 30000,
-    staffTravel: 18000,
-    insurancePermits: 6000,
-    barBuild: 25000
-  },
-  Sydney: {
-    venueHire: 18000,
-    securityMedics: 85000,
-    powerInfra: 45000,
-    wasteManagement: 12000,
-    marketing: 45000,
-    staffTravel: 25000,
-    insurancePermits: 9000,
-    barBuild: 30000
-  },
-  Melbourne: {
-    venueHire: 15000,
-    securityMedics: 80000,
-    powerInfra: 40000,
-    wasteManagement: 10000,
-    marketing: 40000,
-    staffTravel: 22000,
-    insurancePermits: 8000,
-    barBuild: 28000
-  },
-  averages: {
-    ticketPrice: 30,
-    barSpend: 22,
-    traderSalesPerHead: 15,
-    traderCommissionPct: 15,
-    barCOGS: 32 // 32% cost of goods
-  }
+export const plDefaults = {
+  symbol: '£',
+  costs: [
+    { id: 'venue',        label: 'Venue Hire',                      value: 18000, reasoning: '£4,000/day × 3 event days + £3,000/day × 2 build/break days' },
+    { id: 'security',     label: 'Security (SIA Licensed)',          value: 16200, reasoning: '25 SIA guards @ £18/hr × 12hrs × 3 days' },
+    { id: 'medics',       label: 'Medical & First Aid',              value: 4752,  reasoning: '2 paramedics + 4 first aiders @ £22/hr × 12hrs × 3 days' },
+    { id: 'power',        label: 'Power & Generators',               value: 9100,  reasoning: '3 generators @ £700/day × 5 days + £600 fuel & cabling' },
+    { id: 'stage',        label: 'Stage, PA & Lighting Rig',         value: 18000, reasoning: 'Stage build + PA system + lighting rig + AV crew (3-day activation)' },
+    { id: 'bar_build',    label: 'Bar Build & Equipment',            value: 8000,  reasoning: 'Modular bar structures + POS systems, fridges & chillers (hire)' },
+    { id: 'bar_staff',    label: 'Bar Staff',                        value: 10800, reasoning: '30 bar staff @ £12/hr × 10hrs × 3 days' },
+    { id: 'event_staff',  label: 'Event Management & Runners',       value: 6500,  reasoning: '4 coordinators @ £250/day + 5 runners @ £120/day, × 5 days' },
+    { id: 'marketing',    label: 'Marketing & PR',                   value: 18000, reasoning: 'Digital/social ads £8k + influencer fees £4k + print/radio £4k + PR £2k' },
+    { id: 'waste',        label: 'Waste Management & Cleaning',      value: 4800,  reasoning: '8 skip bins @ £200 each + 8 cleaning staff @ £100/day × 3 days' },
+    { id: 'insurance',    label: 'Insurance & Council Permits',      value: 4500,  reasoning: 'Public liability + event cancellation insurance + council permit fees' },
+    { id: 'accommodation',label: 'Staff Travel & Accommodation',     value: 7500,  reasoning: '6 core team: 4 nights hotel @ £150 + travel @ £750/person' },
+    { id: 'ticketing',    label: 'Ticketing Platform Fees',          value: 2000,  reasoning: '~3% of estimated ticket revenue (platform commission)' },
+    { id: 'contingency',  label: 'Contingency Buffer (10%)',         value: 12815, reasoning: '10% of total operational costs as a risk buffer for overruns' },
+  ],
+  revenues: [
+    { id: 'tickets',    label: 'Ticket Sales',              perHead: 25,    reasoning: '£25 avg. general admission (comparable AU food festival benchmark)' },
+    { id: 'bar',        label: 'Bar Net Revenue',           perHead: 18,    reasoning: 'Avg 3.5 drinks @ £8 gross = £28 → £18 net after 36% COGS' },
+    { id: 'commission', label: 'Trader Commissions',        perHead: 9,     reasoning: 'Est. £60 avg food spend per head × 15% commission = £9/head' },
+    { id: 'sponsorship',label: 'Sponsorship & Brand Partners', flat: 10000, reasoning: 'Brand activations, logo placement & partnership deals (flat estimate)' },
+    { id: 'vip',        label: 'VIP / Premium Upgrades',   perHead: 2,     reasoning: '~8% of attendees buy £25 VIP upgrade → est. £2 avg across all attendees' },
+  ]
 };
-

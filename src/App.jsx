@@ -518,216 +518,220 @@ Marketing Team @ Outreach.AU`;
 }
 
 function PLPredictor() {
-  const [city, setCity] = useState('Sydney');
   const [footfall, setFootfall] = useState(9000);
-  const [tktPrice, setTktPrice] = useState(financialBenchmarks.averages.ticketPrice);
-  const [commPct, setCommPct] = useState(financialBenchmarks.averages.traderCommissionPct);
+  const [city, setCity] = useState('Brisbane');
+  const [editingId, setEditingId] = useState(null);
+  const [costs, setCosts] = useState(plDefaults.costs.map(c => ({ ...c })));
+  const [revenues, setRevenues] = useState(plDefaults.revenues.map(r => ({ ...r })));
 
   const cities = ['Brisbane', 'Sydney', 'Melbourne', 'Overview'];
-  
-  const calculatePL = (targetCity) => {
-    if (targetCity === 'Overview') {
-      const bne = calculatePL('Brisbane');
-      const syd = calculatePL('Sydney');
-      const mel = calculatePL('Melbourne');
-      return {
-        revenue: bne.revenue + syd.revenue + mel.revenue,
-        costs: bne.costs + syd.costs + mel.costs,
-        profit: bne.profit + syd.profit + mel.profit
-      };
-    }
+  const sym = plDefaults.symbol;
 
-    const costs = financialBenchmarks[targetCity];
-    const avg = financialBenchmarks.averages;
+  const fmt = (n) => `${sym}${Math.round(n).toLocaleString()}`;
 
-    const ticketRev = footfall * tktPrice;
-    const barRev = (footfall * avg.barSpend);
-    const barProfit = barRev * (1 - (avg.barCOGS / 100));
-    
-    // Estimate trader sales @ $15/head * 15% commission
-    const traderCommRev = (footfall * avg.traderSalesPerHead) * (commPct / 100);
-    
-    const totalRev = ticketRev + barProfit + traderCommRev;
-    const totalFixedCosts = Object.values(costs).reduce((a, b) => a + b, 0);
-    
-    return {
-      revenue: totalRev,
-      costs: totalFixedCosts,
-      profit: totalRev - totalFixedCosts,
-      breakdown: {
-        tickets: ticketRev,
-        barProfit: barProfit,
-        commissions: traderCommRev,
-        fixedCosts: totalFixedCosts
-      }
-    };
+  const totalCosts = costs.reduce((sum, c) => sum + (parseFloat(c.value) || 0), 0);
+
+  const calcRevenue = (revItems, ff) =>
+    revItems.reduce((sum, r) => {
+      if (r.perHead) return sum + (parseFloat(r.perHead) || 0) * ff;
+      if (r.flat) return sum + (parseFloat(r.flat) || 0);
+      return sum;
+    }, 0);
+
+  const totalRevenue = calcRevenue(revenues, footfall);
+  const grossProfit = totalRevenue - totalCosts;
+  const margin = totalRevenue > 0 ? ((grossProfit / totalRevenue) * 100).toFixed(1) : 0;
+
+  // For Overview: multiply per-city by 3
+  const overviewRevenue = totalRevenue * 3;
+  const overviewCosts = totalCosts * 3;
+  const overviewProfit = grossProfit * 3;
+
+  const updateCostValue = (id, val) => {
+    setCosts(prev => prev.map(c => c.id === id ? { ...c, value: val } : c));
   };
 
-  const pl = calculatePL(city);
+  const updateRevenueValue = (id, field, val) => {
+    setRevenues(prev => prev.map(r => r.id === id ? { ...r, [field]: val } : r));
+  };
+
+  const profitColor = grossProfit >= 0 ? '#4CAF50' : '#ff4444';
+
+  const EditableNumber = ({ id, field, value, suffix = '' }) => {
+    const isEditing = editingId === `${id}-${field}`;
+    return isEditing ? (
+      <input
+        type="number"
+        autoFocus
+        defaultValue={value}
+        onBlur={(e) => {
+          if (field === 'value') updateCostValue(id, parseFloat(e.target.value) || 0);
+          else updateRevenueValue(id, field, parseFloat(e.target.value) || 0);
+          setEditingId(null);
+        }}
+        onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
+        style={{
+          width: '100px', padding: '4px 8px', background: '#1a1a1a',
+          border: '1px solid var(--color-accent)', borderRadius: '4px',
+          color: 'var(--color-accent)', fontWeight: 700, textAlign: 'right', fontSize: '0.9rem'
+        }}
+      />
+    ) : (
+      <span
+        style={{ fontWeight: 700, cursor: 'pointer', borderBottom: '1px dashed rgba(255,204,0,0.4)', paddingBottom: '1px' }}
+        onClick={() => setEditingId(`${id}-${field}`)}
+        title="Click to edit"
+      >
+        {sym}{Number(value).toLocaleString()}{suffix}
+      </span>
+    );
+  };
+
+  const displayRevenue = city === 'Overview' ? overviewRevenue : totalRevenue;
+  const displayCosts = city === 'Overview' ? overviewCosts : totalCosts;
+  const displayProfit = city === 'Overview' ? overviewProfit : grossProfit;
+  const displayMultiplier = city === 'Overview' ? 3 : 1;
 
   return (
-    <div className="pl-predictor-view" style={{ animation: 'fadeIn 0.5s ease' }}>
+    <div style={{ animation: 'fadeIn 0.4s ease' }}>
       <div className="header-row">
         <div>
           <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <PieChart size={32} className="text-accent" /> EVENT P&L PREDICTOR
+            <PieChart size={28} /> EVENT P&L PREDICTOR
           </h2>
-          <p className="text-muted">Interactive financial forecasting for the 2027 festival series</p>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
+            All figures in <strong style={{ color: 'var(--color-accent)' }}>Great British Pounds (£)</strong> · Click any value to edit it
+          </p>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(250px, 1fr) 3fr', gap: '32px' }}>
-        {/* Controls */}
-        <div className="card" style={{ height: 'fit-content' }}>
-          <h3 style={{ marginBottom: '24px', fontSize: '1rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '12px' }}>FORECAST VARIABLES</h3>
-          
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, marginBottom: '12px', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>City Selection</label>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {cities.map(c => (
-                <button 
-                  key={c}
-                  className={`filter-btn ${city === c ? 'active' : ''}`}
-                  onClick={() => setCity(c)}
-                  style={{ textAlign: 'left', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                >
-                  {c}
-                  {city === c && <ChevronRight size={14} />}
-                </button>
-              ))}
-            </div>
+      {/* Top KPI row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
+        <div className="card" style={{ borderTop: `4px solid ${profitColor}` }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px' }}>
+            {city === 'Overview' ? 'SERIES PROFIT' : 'EVENT GROSS PROFIT'}
           </div>
+          <div style={{ fontSize: '2rem', fontWeight: 900, color: profitColor }}>{fmt(displayProfit)}</div>
+        </div>
+        <div className="card">
+          <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px' }}>TOTAL REVENUE</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>{fmt(displayRevenue)}</div>
+        </div>
+        <div className="card">
+          <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px' }}>TOTAL COSTS</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ff6b6b' }}>{fmt(displayCosts)}</div>
+        </div>
+        <div className="card">
+          <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px' }}>MARGIN %</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>{margin}%</div>
+        </div>
+      </div>
 
-          <div style={{ marginBottom: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>EST. FOOTFALL</label>
-              <span style={{ color: 'var(--color-accent)', fontWeight: 700 }}>{footfall.toLocaleString()}</span>
-            </div>
-            <input 
-              type="range" min="5000" max="15000" step="500" 
-              value={footfall} onChange={(e) => setFootfall(parseInt(e.target.value))}
-              style={{ width: '100%', accentColor: 'var(--color-accent)' }}
-            />
+      {/* Controls row */}
+      <div style={{ display: 'flex', gap: '24px', marginBottom: '32px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div>
+          <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px' }}>VIEW</div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {cities.map(c => (
+              <button key={c} className={`filter-btn ${city === c ? 'active' : ''}`} onClick={() => setCity(c)}>{c}</button>
+            ))}
           </div>
-
-          <div style={{ marginBottom: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>TICKET PRICE</label>
-              <span style={{ color: 'var(--color-accent)', fontWeight: 700 }}>${tktPrice}</span>
-            </div>
-            <input 
-              type="range" min="15" max="60" step="5" 
-              value={tktPrice} onChange={(e) => setTktPrice(parseInt(e.target.value))}
-              style={{ width: '100%', accentColor: 'var(--color-accent)' }}
-            />
+        </div>
+        <div style={{ flex: 1, minWidth: '250px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>EST. FOOTFALL {city === 'Overview' ? '(PER EVENT)' : ''}</span>
+            <span style={{ color: 'var(--color-accent)', fontWeight: 700 }}>{footfall.toLocaleString()}</span>
           </div>
+          <input type="range" min="5000" max="15000" step="500" value={footfall}
+            onChange={(e) => setFootfall(parseInt(e.target.value))}
+            style={{ width: '100%', accentColor: 'var(--color-accent)' }}
+          />
+        </div>
+      </div>
 
-          <div style={{ marginBottom: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>TRADER COMM.</label>
-              <span style={{ color: 'var(--color-accent)', fontWeight: 700 }}>{commPct}%</span>
+      {/* Two-column: Costs + Revenue */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+
+        {/* === COSTS === */}
+        <div className="card">
+          <h4 style={{ marginBottom: '20px', color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--color-border)', paddingBottom: '12px' }}>
+            <Settings size={18} /> OPERATIONAL COSTS <span style={{ marginLeft: 'auto', color: 'var(--color-text-muted)', fontWeight: 400, fontSize: '0.8rem' }}>Click value to edit</span>
+          </h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+            {costs.map((cost, i) => (
+              <div key={cost.id} style={{
+                display: 'flex', flexDirection: 'column', padding: '10px 0',
+                borderBottom: i < costs.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{cost.label}</span>
+                  <EditableNumber id={cost.id} field="value" value={cost.value} />
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '3px' }}>
+                  {cost.reasoning}
+                  {city === 'Overview' && <span style={{ color: 'var(--color-accent)', fontWeight: 600 }}> × 3 = {fmt(cost.value * 3)}</span>}
+                </div>
+              </div>
+            ))}
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 900, marginTop: '12px', paddingTop: '12px', borderTop: '2px solid var(--color-border)', fontSize: '1.1rem' }}>
+              <span>TOTAL COSTS</span>
+              <span style={{ color: '#ff6b6b' }}>{fmt(displayCosts)}</span>
             </div>
-            <input 
-              type="range" min="10" max="25" step="1" 
-              value={commPct} onChange={(e) => setCommPct(parseInt(e.target.value))}
-              style={{ width: '100%', accentColor: 'var(--color-accent)' }}
-            />
           </div>
         </div>
 
-        {/* Financial Results */}
-        <div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '32px' }}>
-            <div className="card" style={{ borderTop: '4px solid #4CAF50', background: 'rgba(76, 175, 80, 0.03)' }}>
-              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '12px' }}>PROJECTED PROFIT</label>
-              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#4CAF50' }}>
-                ${Math.round(pl.profit).toLocaleString()}
-              </div>
-            </div>
-            <div className="card">
-              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '12px' }}>TOTAL REVENUE (NET)</label>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800 }}>
-                ${Math.round(pl.revenue).toLocaleString()}
-              </div>
-            </div>
-            <div className="card" style={{ opacity: 0.8 }}>
-              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '12px' }}>TOTAL FIXED COSTS</label>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ff4444' }}>
-                ${Math.round(pl.costs).toLocaleString()}
-              </div>
+        {/* === REVENUE === */}
+        <div className="card">
+          <h4 style={{ marginBottom: '20px', color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--color-border)', paddingBottom: '12px' }}>
+            <TrendingUp size={18} /> REVENUE STREAMS <span style={{ marginLeft: 'auto', color: 'var(--color-text-muted)', fontWeight: 400, fontSize: '0.8rem' }}>Click value to edit</span>
+          </h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+            {revenues.map((rev, i) => {
+              const lineVal = rev.perHead ? (rev.perHead * footfall) : (rev.flat || 0);
+              const displayVal = lineVal * displayMultiplier;
+              return (
+                <div key={rev.id} style={{
+                  display: 'flex', flexDirection: 'column', padding: '10px 0',
+                  borderBottom: i < revenues.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{rev.label}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {rev.perHead !== undefined && (
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                          <EditableNumber id={rev.id} field="perHead" value={rev.perHead} />/head →
+                        </span>
+                      )}
+                      {rev.flat !== undefined && (
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                          flat: <EditableNumber id={rev.id} field="flat" value={rev.flat} /> →
+                        </span>
+                      )}
+                      <span style={{ fontWeight: 700, color: '#4CAF50' }}>{fmt(displayVal)}</span>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '3px' }}>
+                    {rev.reasoning}
+                  </div>
+                </div>
+              );
+            })}
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 900, marginTop: '12px', paddingTop: '12px', borderTop: '2px solid var(--color-border)', fontSize: '1.1rem' }}>
+              <span>TOTAL REVENUE</span>
+              <span style={{ color: '#4CAF50' }}>{fmt(displayRevenue)}</span>
             </div>
           </div>
 
-          {city !== 'Overview' ? (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
-              <div className="card">
-                <h4 style={{ marginBottom: '20px', color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <TrendingUp size={18} /> REVENUE BREAKDOWN
-                </h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ color: 'var(--color-text-muted)' }}>Ticket Sales</span>
-                    <span style={{ fontWeight: 600 }}>${Math.round(pl.breakdown.tickets).toLocaleString()}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ color: 'var(--color-text-muted)' }}>Bar Profit (32% COGS)</span>
-                    <span style={{ fontWeight: 600 }}>${Math.round(pl.breakdown.barProfit).toLocaleString()}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ color: 'var(--color-text-muted)' }}>Trader Commissions</span>
-                    <span style={{ fontWeight: 600 }}>${Math.round(pl.breakdown.commissions).toLocaleString()}</span>
-                  </div>
-                  <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', fontWeight: 800 }}>
-                    <span>TOTAL</span>
-                    <span>${Math.round(pl.revenue).toLocaleString()}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card">
-                <h4 style={{ marginBottom: '20px', color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Settings size={18} /> FIXED OPERATIONAL COSTS
-                </h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem' }}>
-                  {Object.entries(financialBenchmarks[city]).map(([key, val]) => (
-                    <div key={key} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: 'var(--color-text-muted)', textTransform: 'capitalize' }}>{key.replace(/([A-Z])/g, ' $1')}</span>
-                      <span style={{ fontWeight: 500 }}>${val.toLocaleString()}</span>
-                    </div>
-                  ))}
-                  <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', fontWeight: 800 }}>
-                    <span>TOTAL</span>
-                    <span>${pl.costs.toLocaleString()}</span>
-                  </div>
-                </div>
-              </div>
+          {/* Profit summary */}
+          <div style={{ marginTop: '24px', padding: '20px', background: grossProfit >= 0 ? 'rgba(76,175,80,0.08)' : 'rgba(255,68,68,0.08)', borderRadius: '8px', border: `1px solid ${grossProfit >= 0 ? '#4CAF50' : '#ff4444'}` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontWeight: 900, fontSize: '1.1rem' }}>{city === 'Overview' ? 'NET SERIES PROFIT' : 'GROSS PROFIT'}</span>
+              <span style={{ fontSize: '1.8rem', fontWeight: 900, color: profitColor }}>{fmt(displayProfit)}</span>
             </div>
-          ) : (
-            <div className="card" style={{ background: 'var(--color-bg-alt)', border: '1px solid var(--color-accent)' }}>
-              <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                <h3 style={{ fontSize: '1.4rem', color: 'var(--color-accent)' }}>3-CITY SERIES SUMMARY</h3>
-                <p className="text-muted">Consolidated projections for Brisbane, Sydney & Melbourne</p>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', textAlign: 'center' }}>
-                <div>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Avg Margin</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>{Math.round((pl.profit / pl.revenue) * 100)}%</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Total Capacity</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>{(footfall * 3).toLocaleString()}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>ROI Multiplier</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>{(pl.revenue / pl.costs).toFixed(2)}x</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Net Series Profit</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#4CAF50' }}>${Math.round(pl.profit).toLocaleString()}</div>
-                </div>
-              </div>
+            <div style={{ marginTop: '8px', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+              Margin: {margin}% · Footfall: {city === 'Overview' ? (footfall * 3).toLocaleString() + ' total' : footfall.toLocaleString()} · ROI: {totalCosts > 0 ? (totalRevenue / totalCosts).toFixed(2) : '-'}x per event
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
@@ -735,3 +739,4 @@ function PLPredictor() {
 }
 
 export default App;
+
