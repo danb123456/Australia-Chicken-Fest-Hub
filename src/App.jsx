@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { traders, venues, nuances, influencers, desserts, projectConfig, plDefaults } from './data/festivalData';
+import { ContextView } from './ContextView';
 import { 
   Users, 
   MapPin, 
