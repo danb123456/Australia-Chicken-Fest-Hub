@@ -12,7 +12,9 @@ import {
   AlertTriangle, 
   Zap,
   Star,
-  IceCream
+  IceCream,
+  DollarSign,
+  PieChart
 } from 'lucide-react';
 
 function App() {
@@ -86,6 +88,13 @@ function App() {
             <Zap size={18} />
             AI Drafter
           </button>
+          <button 
+            className={`nav-item ${activeView === 'pl-predictor' ? 'active' : ''}`}
+            onClick={() => setActiveView('pl-predictor')}
+          >
+            <PieChart size={18} />
+            P&L Predictor
+          </button>
         </nav>
       </aside>
 
@@ -122,6 +131,7 @@ function App() {
             />
           )}
           {activeView === 'drafter' && <EmailDrafter data={traders} venues={venues} influencers={influencers} desserts={desserts} />}
+          {activeView === 'pl-predictor' && <PLPredictor />}
         </div>
       </main>
     </div>
@@ -500,6 +510,223 @@ Marketing Team @ Outreach.AU`;
             </pre>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function PLPredictor() {
+  const [city, setCity] = useState('Sydney');
+  const [footfall, setFootfall] = useState(9000);
+  const [tktPrice, setTktPrice] = useState(financialBenchmarks.averages.ticketPrice);
+  const [commPct, setCommPct] = useState(financialBenchmarks.averages.traderCommissionPct);
+
+  const cities = ['Brisbane', 'Sydney', 'Melbourne', 'Overview'];
+  
+  const calculatePL = (targetCity) => {
+    if (targetCity === 'Overview') {
+      const bne = calculatePL('Brisbane');
+      const syd = calculatePL('Sydney');
+      const mel = calculatePL('Melbourne');
+      return {
+        revenue: bne.revenue + syd.revenue + mel.revenue,
+        costs: bne.costs + syd.costs + mel.costs,
+        profit: bne.profit + syd.profit + mel.profit
+      };
+    }
+
+    const costs = financialBenchmarks[targetCity];
+    const avg = financialBenchmarks.averages;
+
+    const ticketRev = footfall * tktPrice;
+    const barRev = (footfall * avg.barSpend);
+    const barProfit = barRev * (1 - (avg.barCOGS / 100));
+    
+    // Estimate trader sales @ $15/head * 15% commission
+    const traderCommRev = (footfall * avg.traderSalesPerHead) * (commPct / 100);
+    
+    const totalRev = ticketRev + barProfit + traderCommRev;
+    const totalFixedCosts = Object.values(costs).reduce((a, b) => a + b, 0);
+    
+    return {
+      revenue: totalRev,
+      costs: totalFixedCosts,
+      profit: totalRev - totalFixedCosts,
+      breakdown: {
+        tickets: ticketRev,
+        barProfit: barProfit,
+        commissions: traderCommRev,
+        fixedCosts: totalFixedCosts
+      }
+    };
+  };
+
+  const pl = calculatePL(city);
+
+  return (
+    <div className="pl-predictor-view" style={{ animation: 'fadeIn 0.5s ease' }}>
+      <div className="header-row">
+        <div>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <PieChart size={32} className="text-accent" /> EVENT P&L PREDICTOR
+          </h2>
+          <p className="text-muted">Interactive financial forecasting for the 2027 festival series</p>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(250px, 1fr) 3fr', gap: '32px' }}>
+        {/* Controls */}
+        <div className="card" style={{ height: 'fit-content' }}>
+          <h3 style={{ marginBottom: '24px', fontSize: '1rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '12px' }}>FORECAST VARIABLES</h3>
+          
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, marginBottom: '12px', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>City Selection</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {cities.map(c => (
+                <button 
+                  key={c}
+                  className={`filter-btn ${city === c ? 'active' : ''}`}
+                  onClick={() => setCity(c)}
+                  style={{ textAlign: 'left', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                >
+                  {c}
+                  {city === c && <ChevronRight size={14} />}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>EST. FOOTFALL</label>
+              <span style={{ color: 'var(--color-accent)', fontWeight: 700 }}>{footfall.toLocaleString()}</span>
+            </div>
+            <input 
+              type="range" min="5000" max="15000" step="500" 
+              value={footfall} onChange={(e) => setFootfall(parseInt(e.target.value))}
+              style={{ width: '100%', accentColor: 'var(--color-accent)' }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>TICKET PRICE</label>
+              <span style={{ color: 'var(--color-accent)', fontWeight: 700 }}>${tktPrice}</span>
+            </div>
+            <input 
+              type="range" min="15" max="60" step="5" 
+              value={tktPrice} onChange={(e) => setTktPrice(parseInt(e.target.value))}
+              style={{ width: '100%', accentColor: 'var(--color-accent)' }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>TRADER COMM.</label>
+              <span style={{ color: 'var(--color-accent)', fontWeight: 700 }}>{commPct}%</span>
+            </div>
+            <input 
+              type="range" min="10" max="25" step="1" 
+              value={commPct} onChange={(e) => setCommPct(parseInt(e.target.value))}
+              style={{ width: '100%', accentColor: 'var(--color-accent)' }}
+            />
+          </div>
+        </div>
+
+        {/* Financial Results */}
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '32px' }}>
+            <div className="card" style={{ borderTop: '4px solid #4CAF50', background: 'rgba(76, 175, 80, 0.03)' }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '12px' }}>PROJECTED PROFIT</label>
+              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#4CAF50' }}>
+                ${Math.round(pl.profit).toLocaleString()}
+              </div>
+            </div>
+            <div className="card">
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '12px' }}>TOTAL REVENUE (NET)</label>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800 }}>
+                ${Math.round(pl.revenue).toLocaleString()}
+              </div>
+            </div>
+            <div className="card" style={{ opacity: 0.8 }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '12px' }}>TOTAL FIXED COSTS</label>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ff4444' }}>
+                ${Math.round(pl.costs).toLocaleString()}
+              </div>
+            </div>
+          </div>
+
+          {city !== 'Overview' ? (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+              <div className="card">
+                <h4 style={{ marginBottom: '20px', color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <TrendingUp size={18} /> REVENUE BREAKDOWN
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: 'var(--color-text-muted)' }}>Ticket Sales</span>
+                    <span style={{ fontWeight: 600 }}>${Math.round(pl.breakdown.tickets).toLocaleString()}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: 'var(--color-text-muted)' }}>Bar Profit (32% COGS)</span>
+                    <span style={{ fontWeight: 600 }}>${Math.round(pl.breakdown.barProfit).toLocaleString()}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: 'var(--color-text-muted)' }}>Trader Commissions</span>
+                    <span style={{ fontWeight: 600 }}>${Math.round(pl.breakdown.commissions).toLocaleString()}</span>
+                  </div>
+                  <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', fontWeight: 800 }}>
+                    <span>TOTAL</span>
+                    <span>${Math.round(pl.revenue).toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card">
+                <h4 style={{ marginBottom: '20px', color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Settings size={18} /> FIXED OPERATIONAL COSTS
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem' }}>
+                  {Object.entries(financialBenchmarks[city]).map(([key, val]) => (
+                    <div key={key} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--color-text-muted)', textTransform: 'capitalize' }}>{key.replace(/([A-Z])/g, ' $1')}</span>
+                      <span style={{ fontWeight: 500 }}>${val.toLocaleString()}</span>
+                    </div>
+                  ))}
+                  <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', fontWeight: 800 }}>
+                    <span>TOTAL</span>
+                    <span>${pl.costs.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="card" style={{ background: 'var(--color-bg-alt)', border: '1px solid var(--color-accent)' }}>
+              <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                <h3 style={{ fontSize: '1.4rem', color: 'var(--color-accent)' }}>3-CITY SERIES SUMMARY</h3>
+                <p className="text-muted">Consolidated projections for Brisbane, Sydney & Melbourne</p>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', textAlign: 'center' }}>
+                <div>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Avg Margin</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>{Math.round((pl.profit / pl.revenue) * 100)}%</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Total Capacity</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>{(footfall * 3).toLocaleString()}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>ROI Multiplier</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>{(pl.revenue / pl.costs).toFixed(2)}x</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Net Series Profit</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#4CAF50' }}>${Math.round(pl.profit).toLocaleString()}</div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
