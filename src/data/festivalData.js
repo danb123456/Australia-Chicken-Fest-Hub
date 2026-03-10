@@ -218,3 +218,21 @@ export const nuances = [
     impact: "AU attendees expect seamless mobile payment and high-quality bev options."
   }
 ];
+
+export const projectConfig = {
+  timing: "February/March 2027 (dates tbc)",
+  footfall: "8,000–10,000 per event",
+  duration: "3 days (Friday–Sunday)",
+  buildBreak: "2 day build, 1 day break",
+  sessions: "12:00–22:00 (Split into 2 sessions)",
+  sisterFestivals: [
+    { name: "FUME", url: "www.fumefestival.com" },
+    { name: "Wingjam", url: "www.wingjam.com" },
+    { name: "ROOST", notes: "Website pending" }
+  ],
+  senders: [
+    { id: 'dan', name: "Dan", email: "dan@savourfestival.com" },
+    { id: 'jack', name: "Jack", email: "jack@savourfestival.com" }
+  ]
+};
+
